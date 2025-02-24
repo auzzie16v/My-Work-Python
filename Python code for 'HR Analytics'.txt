@@ -1,0 +1,186 @@
+>>> import pandas as pd
+>>> import matplotlib.pyplot as plt
+>>> file_path = r"C:\Users\14027\Documents\HR Analytics.csv"
+>>> df = pd.read_csv(file_path)
+>>> # Summary statistics for numerical columns
+>>> print("\nSummary Statistics:")
+
+Summary Statistics:
+>>> print(df.describe())
+       Employee ID  Current Employee Rating  ...  Training Cost          Age
+count  2845.000000              2845.000000  ...    2845.000000  2845.000000
+mean   2470.591916                 2.974692  ...     559.278956    49.448506
+std     859.450107                 1.012610  ...     263.333611    17.689179
+min    1001.000000                 1.000000  ...     100.040000    17.000000
+25%    1736.000000                 2.000000  ...     328.060000    34.000000
+50%    2456.000000                 3.000000  ...     571.810000    49.000000
+75%    3197.000000                 3.000000  ...     788.330000    65.000000
+max    4000.000000                 5.000000  ...     999.970000    82.000000
+[8 rows x 8 columns]
+>>> # Display the first few rows of the dataset
+>>> print("\nFirst 5 rows of the dataset:")
+
+First 5 rows of the dataset:
+>>> print(df.head())
+   Employee ID  StartDate  ... Training Cost Age
+0         3427  20-Sep-19  ...        606.11  50
+1         3428  11-Feb-23  ...        673.02  58
+2         3429  10-Dec-18  ...        413.28  27
+3         3430  21-Jun-21  ...        663.78  23
+4         3431  29-Jun-19  ...        399.03  50
+
+[5 rows x 28 columns]
+>>> # Distribution of employees by gender
+>>> gender_distribution = df['GenderCode'].value_counts()
+>>> print("\nGender Distribution:")
+
+Gender Distribution:
+>>> print(gender_distribution)
+GenderCode
+Female    1588
+Male      1257
+Name: count, dtype: int64
+>>> # Plotting the gender distribution
+>>> gender_distribution.plot(kind='bar', title='Gender Distribution')
+<Axes: title={'center': 'Gender Distribution'}, xlabel='GenderCode'>
+>>> plt.xlabel('Gender')
+Text(0.5, 0, 'Gender')
+>>> plt.ylabel('Number of Employees')
+Text(0, 0.5, 'Number of Employees')
+>>> plt.show()
+>>> # Distribution of employees by performance score
+>>> performance_distribution = df['Performance Score'].value_counts()
+>>> print("\nPerformance Score Distribution:")
+
+Performance Score Distribution:
+>>> print(performance_distribution)
+Performance Score
+Fully Meets          2251
+Exceeds               346
+Needs Improvement     162
+PIP                    86
+Name: count, dtype: int64
+>>> # Plotting the performance score distribution
+>>> performance_distribution.plot(kind='bar', title='Performance Score Dist\ribution')
+<Axes: title={'center': 'Performance Score Distribution'}, xlabel='Performance Score'>
+>>> plt.xlabel('Performance Score')
+Text(0.5, 0, 'Performance Score')
+>>> plt.ylabel('Number of Employees')
+Text(0, 0.5, 'Number of Employees')
+>>> plt.show()
+>>> # Distribution of training outcomes
+>>> training_outcome_distribution = df['Training Outcome'].value_counts()
+>>> print("\nTraining Outcome Distribution:")
+
+Training Outcome Distribution:
+>>> print(training_outcome_distribution)
+Training Outcome
+Completed     737
+Incomplete    731
+Passed        709
+Failed        668
+Name: count, dtype: int64
+>>> # Plotting the training outcome distribution
+>>> training_outcome_distribution.plot(kind='bar', title='Training Outcome \Distribution')
+<Axes: title={'center': 'Training Outcome Distribution'}, xlabel='Training Outcome'>
+>>> plt.xlabel('Training Outcome')
+Text(0.5, 0, 'Training Outcome')
+>>> plt.ylabel('Number of Employees')
+Text(0, 0.5, 'Number of Employees')
+>>> plt.show()
+>>> # Average age of employees
+>>> average_age = df['Age'].mean()
+>>> print(f"\nAverage Age of Employees: {average_age:.2f} years")
+
+Average Age of Employees: 49.45 years
+>>> # Distribution of employees by department
+>>> department_distribution = df['DepartmentType'].value_counts()
+>>> print("\nDepartment Distribution:")
+
+Department Distribution:
+>>> print(department_distribution)
+DepartmentType
+Production              1910
+IT/IS                    409
+Sales                    311
+Software Engineering     112
+Admin Offices             79
+Executive Office          24
+Name: count, dtype: int64
+>>> # Plotting the department distribution
+>>> department_distribution.plot(kind='bar', title='Department Distribution\')
+<Axes: title={'center': 'Department Distribution'}, xlabel='DepartmentType'>
+>>> plt.xlabel('Department')
+Text(0.5, 0, 'Department')
+>>> plt.ylabel('Number of Employees')
+Text(0, 0.5, 'Number of Employees')
+>>> plt.show()
+>>> # Distribution of employees by employee type
+>>> employee_type_distribution = df['EmployeeType'].value_counts()
+>>> print("\nEmployee Type Distribution:")
+
+Employee Type Distribution:
+>>> print(employee_type_distribution)
+EmployeeType
+Full-Time    997
+Contract     951
+Part-Time    897
+Name: count, dtype: int64
+>>> # Plotting the employee type distribution
+>>> employee_type_distribution.plot(kind='bar', title='Employee Type Distri\bution')
+<Axes: title={'center': 'Employee Type Distribution'}, xlabel='EmployeeType'>
+>>> plt.xlabel('Employee Type')
+Text(0.5, 0, 'Employee Type')
+>>> plt.ylabel('Number of Employees')
+Text(0, 0.5, 'Number of Employees')
+>>> plt.show()
+>>> # Distribution of employees by employee status
+>>> employee_status_distribution = df['EmployeeStatus'].value_counts()
+>>> print("\nEmployee Status Distribution:")
+
+Employee Status Distribution:
+>>> print(employee_status_distribution)
+EmployeeStatus
+Active        2458
+Terminated     387
+Name: count, dtype: int64
+>>> # Plotting the employee status distribution
+>>> employee_status_distribution.plot(kind='bar', title='Employee Status Di\stribution')
+<Axes: title={'center': 'Employee Status Distribution'}, xlabel='EmployeeStatus'>
+>>> plt.xlabel('Employee Status')
+Text(0.5, 0, 'Employee Status')
+>>> plt.ylabel('Number of Employees')
+Text(0, 0.5, 'Number of Employees')
+>>> plt.show()
+>>> # Check if there are numeric columns to analyze
+>>> if numeric_df.empty:
+...     print("\nNo numeric columns found for correlation analysis.")
+... else:
+...     correlation_matrix = numeric_df.corr()
+...     print("\nCorrelation Matrix:")
+...     print(correlation_matrix)
+
+Correlation Matrix:
+                         Employee ID  ...       Age
+Employee ID                 1.000000  ...  0.004797
+Current Employee Rating    -0.016471  ... -0.020115
+Engagement Score            0.014512  ... -0.033427
+Satisfaction Score          0.018004  ... -0.006391
+Work-Life Balance Score    -0.020639  ... -0.011811
+Training Duration(Days)    -0.003982  ...  0.003657
+Training Cost              -0.019489  ... -0.001903
+Age                         0.004797  ...  1.000000
+>>> # Plotting the correlation matrix
+>>> plt.figure(figsize=(10, 8))
+<Figure size 1000x800 with 0 Axes>
+>>> plt.imshow(correlation_matrix, cmap='coolwarm', interpolation='none')
+<matplotlib.image.AxesImage object at 0x000002418F18F8C0>
+>>> plt.colorbar()
+<matplotlib.colorbar.Colorbar object at 0x000002418F18F620>
+>>> plt.xticks(range(len(correlation_matrix.columns)), correlation_matrix.c\olumns, rotation=90)
+([<matplotlib.axis.XTick object at 0x0000024190288690>, <matplotlib.axis.XTick object at 0x00000241902BA0D0>, <matplotlib.axis.XTick object at 0x00000241902BA5D0>, <matplotlib.axis.XTick object at 0x00000241902BAD50>, <matplotlib.axis.XTick object at 0x00000241902BB4D0>, <matplotlib.axis.XTick object at 0x00000241902BBC50>, <matplotlib.axis.XTick object at 0x00000241906B8410>, <matplotlib.axis.XTick object at 0x00000241906B8B90>], [Text(0, 0, 'Employee ID'), Text(1, 0, 'Current Employee Rating'), Text(2, 0, 'Engagement Score'), Text(3, 0, 'Satisfaction Score'), Text(4, 0, 'Work-Life Balance Score'), Text(5, 0, 'Training Duration(Days)'), Text(6, 0, 'Training Cost'), Text(7, 0, 'Age')])
+>>> plt.yticks(range(len(correlation_matrix.columns)), correlation_matrix.c\olumns)
+([<matplotlib.axis.YTick object at 0x0000024190288E10>, <matplotlib.axis.YTick object at 0x00000241906B96D0>, <matplotlib.axis.YTick object at 0x00000241906B9BD0>, <matplotlib.axis.YTick object at 0x00000241906BA350>, <matplotlib.axis.YTick object at 0x00000241906BAAD0>, <matplotlib.axis.YTick object at 0x00000241906BB250>, <matplotlib.axis.YTick object at 0x00000241906BB9D0>, <matplotlib.axis.YTick object at 0x00000241906DC190>], [Text(0, 0, 'Employee ID'), Text(0, 1, 'Current Employee Rating'), Text(0, 2, 'Engagement Score'), Text(0, 3, 'Satisfaction Score'), Text(0, 4, 'Work-Life Balance Score'), Text(0, 5, 'Training Duration(Days)'), Text(0, 6, 'Training Cost'), Text(0, 7, 'Age')])
+>>> plt.title('Correlation Matrix')
+Text(0.5, 1.0, 'Correlation Matrix')
+>>> plt.show()

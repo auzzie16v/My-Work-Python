@@ -1,0 +1,368 @@
+>>> pip install pandas
+>>> import pandas as pd
+# Load the CSV file into a pandas DataFrame
+>>> file_path = r"C:\Users\14027\Documents\Ted Lasso.csv"
+>>> df = pd.read_csv(file_path)
+# Display the first few rows of the DataFrame to understand its structure
+>>> print(df.head())
+   Rk             Player   Nation    Pos  ... Stp% #OPA  #OPA/90  AvgDist
+0   1         Max Aarons  eng ENG     DF  ...  NaN  NaN      NaN      NaN
+1   2         Max Aarons  eng ENG     MF  ...  NaN  NaN      NaN      NaN
+2   3     Rodrigo Abajas   es ESP     DF  ...  NaN  NaN      NaN      NaN
+3   4     James Abankwah   ie IRL  DF,MF  ...  NaN  NaN      NaN      NaN
+4   5  Keyliane Abdallah   fr FRA     FW  ...  NaN  NaN      NaN      NaN
+# Summary statistics for numerical columns
+>>> print(df.describe())
+                Rk          Age  ...     #OPA/90     AvgDist
+count  2657.000000  2653.000000  ...  180.000000  178.000000
+mean   1328.598043    25.730871  ...    1.149222   14.083708
+std     766.737758     4.402875  ...    0.855419    3.671283
+min       1.000000    16.000000  ...    0.000000    4.700000
+25%     665.000000    22.000000  ...    0.670000   12.000000
+50%    1329.000000    25.000000  ...    1.000000   13.600000
+75%    1992.000000    29.000000  ...    1.500000   15.475000
+max    2656.000000    42.000000  ...    6.130000   28.000000
+# Filter players by position (e.g., forwards)
+>>> forwards = df[df['Pos'].str.contains('FW',na=False)]
+>>> print(forwards.head())
+    Rk             Player   Nation    Pos  ... Stp% #OPA  #OPA/90  AvgDist
+4    5  Keyliane Abdallah   fr FRA     FW  ...  NaN  NaN      NaN      NaN
+6    7      Himad Abdelli   dz ALG  MF,FW  ...  NaN  NaN      NaN      NaN
+13  14     Matthis Abline   fr FRA     FW  ...  NaN  NaN      NaN      NaN
+15  16  Zakaria Aboukhlal   ma MAR  MF,FW  ...  NaN  NaN      NaN      NaN
+17  18      Tammy Abraham  eng ENG     FW  ...  NaN  NaN      NaN      NaN
+# Calculate average goals per player
+>>> average_goals = df['Gls'].mean()
+>>> print(f"Average goals per player: {average_goals:.2f}")
+Average goals per player: 1.14
+# Calculate average assists per player
+>>> average_assists = df['Ast'] .mean()
+>>> print(f"Average assists pr player: {average_assists:.2f}")
+Average assists pr player: 0.80
+# Group by position and calculate average goals and assists
+>>> position_stats = df.groupby('Pos').agg({'Gls':'mean','Ast':'mean'}).res\et_index()
+>>> print(position_stats)
+     Pos       Gls       Ast
+0     DF  0.415328  0.519159
+1  DF,FW  0.866667  0.844444
+2  DF,MF  0.617978  0.910112
+3     FW  3.209169  1.148997
+4  FW,DF  0.708333  0.541667
+5  FW,MF  2.045296  1.383275
+6     GK  0.000000  0.061111
+7     MF  0.792517  0.765306
+8  MF,DF  0.920635  1.285714
+9  MF,FW  1.605381  1.094170
+# Filter players by a specific team (e.g., Liverpool)
+>>> liverpool_players = df[df['Squad'] == 'Liverpool']
+>>> print(liverpool_players)
+        Rk                  Player   Nation  ...  #OPA #OPA/90 AvgDist
+78      79  Trent Alexander-Arnold  eng ENG  ...   NaN     NaN     NaN
+82      83                 Alisson   br BRA  ...  27.0    1.82    15.4
+351    352           Conor Bradley  nir NIR  ...   NaN     NaN     NaN
+508    509         Federico Chiesa   it ITA  ...   NaN     NaN     NaN
+610    611            Jayden Danns  eng ENG  ...   NaN     NaN     NaN
+670    671               Luis Díaz   co COL  ...   NaN     NaN     NaN
+771    772          Harvey Elliott  eng ENG  ...   NaN     NaN     NaN
+782    783             Wataru Endo   jp JPN  ...   NaN     NaN     NaN
+876    877              Cody Gakpo   nl NED  ...   NaN     NaN     NaN
+945    946               Joe Gomez  eng ENG  ...   NaN     NaN     NaN
+970    971        Ryan Gravenberch   nl NED  ...   NaN     NaN     NaN
+1149  1150         Vitezslav Jaros   cz CZE  ...   0.0    0.00    11.0
+1175  1176            Curtis Jones  eng ENG  ...   NaN     NaN     NaN
+1181  1182              Diogo Jota   pt POR  ...   NaN     NaN     NaN
+1238  1239       Caoimhín Kelleher   ie IRL  ...   8.0    1.00    15.1
+1281  1282         Ibrahima Konaté   fr FRA  ...   NaN     NaN     NaN
+1446  1447     Alexis Mac Allister   ar ARG  ...   NaN     NaN     NaN
+1787  1787            Darwin Núñez   uy URU  ...   NaN     NaN     NaN
+2001  2001          Jarell Quansah  eng ENG  ...   NaN     NaN     NaN
+2061  2061        Andrew Robertson  sct SCO  ...   NaN     NaN     NaN
+2136  2136           Mohamed Salah   eg EGY  ...   NaN     NaN     NaN
+2358  2358      Dominik Szoboszlai   hu HUN  ...   NaN     NaN     NaN
+2449  2449         Kostas Tsimikas   gr GRE  ...   NaN     NaN     NaN
+2482  2482         Virgil van Dijk   nl NED  ...   NaN     NaN     NaN
+# Calculate the total number of yellow cards per team
+>>> yellow_cards_per_team = df.groupby('Squad')['CrdY'].sum().reset_index()
+>>> print(yellow_cards_per_team)
+            Squad  CrdY
+0          Alavés    60
+1          Angers    29
+2         Arsenal    53
+3     Aston Villa    53
+4        Atalanta    46
+..            ...   ...
+91     Villarreal    64
+92  Werder Bremen    49
+93       West Ham    57
+94      Wolfsburg    55
+95         Wolves    55
+# Find the top 5 players with the most goals
+>>> top_scorers = df.nlargest(5, 'Gls')[['Player','Squad','Ast']]
+>>> print(top_scorers)
+                  Player            Squad  Ast
+1218          Harry Kane    Bayern Munich    7
+2136       Mohamed Salah        Liverpool   13
+2041       Mateo Retegui         Atalanta    3
+1023      Erling Haaland  Manchester City    2
+1378  Robert Lewandowski        Barcelona    2
+# Find the top 5 players with the most assists
+>>> top_assisters = df.nlargest(5,'Ast')[['Player','Squad','Ast']]
+>>> print(top_assisters)
+                Player           Squad  Ast
+2136     Mohamed Salah       Liverpool   13
+2062  Antonee Robinson          Fulham   10
+2132       Bukayo Saka         Arsenal   10
+2597      Lamine Yamal       Barcelona   10
+1515     Omar Marmoush  Eint Frankfurt    9
+# Calculate the average age of players
+>>> average_age = df['Age'].mean()
+>>> print(f"Average age of Players: {average_age:.2f}")
+Average age of Players: 25.73
+# Group by nation and calculate the number of players
+>>> players_per_nation = df['Nation'].value_counts().reset_index()
+>>> players_per_nation.columns = ['Nation','Number of Players']
+>>> print(players_per_nation)
+      Nation  Number of Players
+0     es ESP                380
+1     fr FRA                322
+2     de GER                219
+3    eng ENG                211
+4     it ITA                208
+..       ...                ...
+105   ke KEN                  1
+106   ms MSR                  1
+107   lu LUX                  1
+108   ir IRN                  1
+109   mt MLT                  1
+# Filter players by age (e.g., under 23)
+>>> young_players = df[df['Age']<23]
+>>> print(young_players)
+        Rk             Player  Nation    Pos  ... Stp% #OPA  #OPA/90  AvgDist
+2        3     Rodrigo Abajas  es ESP     DF  ...  NaN  NaN      NaN      NaN
+3        4     James Abankwah  ie IRL  DF,MF  ...  NaN  NaN      NaN      NaN
+4        5  Keyliane Abdallah  fr FRA     FW  ...  NaN  NaN      NaN      NaN
+11      12      Nabil Aberdin  fr FRA     MF  ...  NaN  NaN      NaN      NaN
+13      14     Matthis Abline  fr FRA     FW  ...  NaN  NaN      NaN      NaN
+...    ...                ...     ...    ...  ...  ...  ...      ...      ...
+2636  2636       Kevin Zeroli  it ITA     MF  ...  NaN  NaN      NaN      NaN
+2640  2640        Nathan Zeze  fr FRA     DF  ...  NaN  NaN      NaN      NaN
+2646  2646          Luc Zogbé  ci CIV     DF  ...  NaN  NaN      NaN      NaN
+2648  2648    Aristide Zossou  ci CIV     MF  ...  NaN  NaN      NaN      NaN
+2652  2652       Edhy Zuliani  it ITA     DF  ...  NaN  NaN      NaN      Na
+# Calculate the average minutes played per player
+>>> average_minutes_played = df['Min'].mean()
+>>> print(f"Average minutes played per Player: {average_minutes_played:.2f}\")
+Average minutes played per Player: 805.67
+# Group by team and calculate the average age
+>>> average_age_per_team = df.groupby('Squad')['Age'].mean().reset_index()
+>>> print(average_age_per_team)
+            Squad        Age
+0          Alavés  26.038462
+1          Angers  26.958333
+2         Arsenal  25.750000
+3     Aston Villa  26.440000
+4        Atalanta  26.064516
+..            ...        ...
+91     Villarreal  26.518519
+92  Werder Bremen  26.565217
+93       West Ham  27.576923
+94      Wolfsburg  25.680000
+95         Wolves  26.307692
+# Find the player with the most minutes played
+>>> most_minutes_played = df.nlargest(1,'Min')[['Player','Squad','Min']]
+>>> print(most_minutes_played)
+                   Player  Squad   Min
+240  Federico Baschirotto  Lecce  2160
+# Calculate the total number of goals per team
+>>> goals_per_team = df.groupby('Squad')['Gls'].sum().reset_index()
+>>> print(goals_per_team)
+            Squad  Gls
+0          Alavés   25
+1          Angers   21
+2         Arsenal   47
+3     Aston Villa   33
+4        Atalanta   53
+..            ...  ...
+91     Villarreal   44
+92  Werder Bremen   34
+93       West Ham   28
+94      Wolfsburg   41
+95         Wolves   34
+# Calculate the total number of assists per team
+>>> assists_per_team = df.groupby('Squad')['Ast'].sum().reset_index()
+>>> print(assists_per_team)
+            Squad  Ast
+0          Alavés   12
+1          Angers   14
+2         Arsenal   36
+3     Aston Villa   26
+4        Atalanta   37
+..            ...  ...
+91     Villarreal   28
+92  Werder Bremen   26
+93       West Ham   16
+94      Wolfsburg   28
+95         Wolves   28
+# Filter players by a specific competition (e.g., Premier League)
+>>> premier_league_players = df[df['Comp'] == 'eng Premier League']
+>>> print(premier_league_players)
+        Rk               Player   Nation  ... #OPA #OPA/90 AvgDist
+0        1           Max Aarons  eng ENG  ...  NaN     NaN     NaN
+21      22    Joshua Acheampong  eng ENG  ...  NaN     NaN     NaN
+25      26          Tyler Adams   us USA  ...  NaN     NaN     NaN
+27      28     Tosin Adarabioyo  eng ENG  ...  NaN     NaN     NaN
+30      31        Simon Adingra   ci CIV  ...  NaN     NaN     NaN
+...    ...                  ...      ...  ...  ...     ...     ...
+2606  2606         Ashley Young  eng ENG  ...  NaN     NaN     NaN
+2608  2608       Illia Zabarnyi   ua UKR  ...  NaN     NaN     NaN
+2643  2643  Oleksandr Zinchenko   ua UKR  ...  NaN     NaN     NaN
+2644  2644       Joshua Zirkzee   nl NED  ...  NaN     NaN     NaN
+2654  2654      Martin Ødegaard   no NOR  ...  NaN     NaN     NaN
+# Calculate the average number of yellow cards per player
+>>> average_yellow_cards = df['CrdY'].mean()
+>>> print(f"Average yellow cards per player: {average_yellow_cards:.2f}")
+Average yellow cards per player: 1.76
+# Calculate the average number of red cards per player
+>>> average_red_cards = df['CrdR'].mean()
+>>> print(f"Average red cards per player:{average_red_cards:.2f}")
+Average red cards per player:0.08
+# Group by competition and calculate the average goals per player
+>>> average_goals_per_competition = df.groupby('Comp')['Gls'].mean().reset_\index()
+>>> print(average_goals_per_competition)
+                 Comp       Gls
+0       de Bundesliga  1.272532
+1  eng Premier League  1.327684
+2          es La Liga  1.032200
+3          fr Ligue 1  1.040777
+4          it Serie A  1.066553
+# Group by competition and calculate the average assists per player
+>>> average_assists_per_competition = df.groupby('Comp')['Ast'].mean().rese\t_index()
+>>> print(average_assists_per_competition)
+                 Comp       Ast
+0       de Bundesliga  0.890558
+1  eng Premier League  0.979284
+2          es La Liga  0.726297
+3          fr Ligue 1  0.695146
+4          it Serie A  0.745734
+# Filter players by a specific nation (e.g., England)
+>>> england_players = df[df['Nation'] == 'eng ENG']
+>>> print(england_players)
+        Rk              Player   Nation Pos  ... Stp% #OPA  #OPA/90  AvgDist
+0        1          Max Aarons  eng ENG  DF  ...  NaN  NaN      NaN      NaN
+1        2          Max Aarons  eng ENG  MF  ...  NaN  NaN      NaN      NaN
+17      18       Tammy Abraham  eng ENG  FW  ...  NaN  NaN      NaN      NaN
+18      19       Tammy Abraham  eng ENG  FW  ...  NaN  NaN      NaN      NaN
+21      22   Joshua Acheampong  eng ENG  DF  ...  NaN  NaN      NaN      NaN
+...    ...                 ...      ...  ..  ...  ...  ...      ...      ...
+2583  2583      Ben Winterburn  eng ENG  MF  ...  NaN  NaN      NaN      NaN
+2593  2593  Nathan Wood-Gordon  eng ENG  DF  ...  NaN  NaN      NaN      NaN
+2595  2595     Luke Woolfenden  eng ENG  DF  ...  NaN  NaN      NaN      NaN
+2601  2601          Ryan Yates  eng ENG  MF  ...  NaN  NaN      NaN      NaN
+2606  2606        Ashley Young  eng ENG  DF  ...  NaN  NaN      NaN      NaN
+# Calculate the total number of goals per nation
+>>> goals_per_nation = df.groupby('Nation')['Gls'].sum().reset_index()
+>>> print(goals_per_nation)
+      Nation  Gls
+0     al ALB    3
+1     am ARM    1
+2     ao ANG   10
+3     ar ARG  101
+4     at AUT   21
+..       ...  ...
+105   ve VEN    3
+106  wls WAL   16
+107   xk KVX    9
+108   zm ZAM    1
+109   zw ZIM    6
+# Calculate the total number of assists per nation
+>>> assists_per_nation = df.groupby('Nation')['Ast'].sum().reset_index()
+>>> print(assists_per_nation)
+      Nation  Ast
+0     al ALB    7
+1     am ARM    3
+2     ao ANG    6
+3     ar ARG   63
+4     at AUT   29
+..       ...  ...
+105   ve VEN    3
+106  wls WAL    7
+107   xk KVX    6
+108   zm ZAM    1
+109   zw ZIM    6
+# Filter players by a specific age range (e.g., 25-30)
+>>> age_range_players = df[(df['Age'] >=25) & (df['Age'] <=30)]
+>>> print(age_range_players)
+        Rk               Player   Nation  ... #OPA #OPA/90 AvgDist
+0        1           Max Aarons  eng ENG  ...  NaN     NaN     NaN
+1        2           Max Aarons  eng ENG  ...  NaN     NaN     NaN
+6        7        Himad Abdelli   dz ALG  ...  NaN     NaN     NaN
+7        8  Mohamed Abdelmoneim   eg EGY  ...  NaN     NaN     NaN
+9       10      Saud Abdulhamid   sa KSA  ...  NaN     NaN     NaN
+...    ...                  ...      ...  ...  ...     ...     ...
+2649  2649        Yanis Zouaoui   dz ALG  ...  NaN     NaN     NaN
+2650  2650        Igor Zubeldia   es ESP  ...  NaN     NaN     NaN
+2651  2651     Martín Zubimendi   es ESP  ...  NaN     NaN     NaN
+2653  2653     Szymon Żurkowski   pl POL  ...  NaN     NaN     NaN
+2654  2654      Martin Ødegaard   no NOR  ...  NaN     NaN     NaN
+# Calculate the average number of minutes played per position
+>>> average_minutes_per_position = df.groupby('Pos')['Min'].mean().reset_in\dex()
+>>> print(average_minutes_per_position)
+     Pos          Min
+0     DF   906.740420
+1  DF,FW   751.600000
+2  DF,MF   788.685393
+3     FW   697.707736
+4  FW,DF   416.916667
+5  FW,MF   706.167247
+6     GK  1083.894444
+7     MF   735.926871
+8  MF,DF   831.714286
+9  MF,FW   747.529148
+# Find the player with the most yellow cards
+>>> most_yellow_cards = df.nlargest(1,'CrdY')[['Player','Squad','CrdY']]
+>>> print(most_yellow_cards)
+         Player   Squad  CrdY
+16  Abdel Abqar  Alavés    11
+# Find the player with the most red cards
+>>> most_red_cards = df.nlargest(1,'CrdR')[['Player','Squad','CrdR']]
+>>> print(most_red_cards)
+           Player     Squad  CrdR
+106  Nadiem Amiri  Mainz 05     2
+# Calculate the average number of goals per game for each player
+>>> df['Goals per Game'] = df['Gls'] / (df['Min'] / 90)
+>>> print(df[['Player','Squad','Goals per Game']].sort_values(by='Goals per\
+ Game',ascending=False).head())
+              Player           Squad  Goals per Game
+791      Romain Esse  Crystal Palace       12.857143
+751     Noah Edjouma        Toulouse        4.090909
+542   Florinel Coman        Cagliari        4.090909
+867      Shiō Fukuda        Gladbach        3.461538
+1395  Marin Ljubicic    Union Berlin        2.812500
+# Calculate the average number of assists per game for each player
+>>> df['Assists per Game'] = df['Ast'] / (df['Min'] / 90)
+>>> print(df[['Player','Squad','Assists per Game']].sort_values(by='Assists\
+ per Game',ascending=False).head())
+               Player         Squad  Assists per Game
+2619  Nicola Zalewski         Inter          6.000000
+1516     Mario Maroto    Valladolid          4.736842
+1395   Marin Ljubicic  Union Berlin          2.812500
+961      Amine Gouiri     Marseille          2.523364
+87        Iker Almena        Girona          1.875000
+# Calculate the average number of yellow cards per game for each player
+>>> df['Yellow Cards per Game'] = df['CrdY'] / (df['Min'] / 90)
+>>> print(df[['Player','Squad','Yellow Cards per Game']].sort_values(by='Ye\llow Cards per Game',ascending=False).head())
+               Player       Squad  Yellow Cards per Game
+34          Adryelson        Lyon                   90.0
+260  Ismael Bekhoucha      Getafe                   90.0
+83      Tadeo Allende  Celta Vigo                   45.0
+865     Darío Fuentes     Sevilla                   18.0
+832        Karol Fila  Strasbourg                   18.0
+# Calculate the average number of red cards per game for each player
+>>> df['Red Cards per Game'] = df['CrdR'] / (df['Min'] / 90)
+>>> print(df[['Player','Squad','Red Cards per Game']].sort_values(by='Red C\ards per Game',ascending=False).head())
+                 Player      Squad  Red Cards per Game
+2609         Eloge Zabi      Reims            5.000000
+238   Davide Bartesaghi      Milan            1.800000
+645         Ali Dembélé     Torino            0.782609
+1199     Almugera Kabar   Dortmund            0.720000
+746       Adam Dźwigała  St. Pauli            0.552147
