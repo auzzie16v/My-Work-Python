@@ -1,0 +1,88 @@
+## The following python script shows economic indicators and expected probability aligned with actual recession output ##
+
+>>> import pandas as pd
+>>> import numpy as np
+>>> import matplotlib.pyplot as plt
+>>> from sklearn.model_selection import train_test_split
+>>> from sklearn.ensemble import RandomForestClassifier
+>>> from sklearn.metrics import classification_report, confusion_matrix
+>>> from fredapi import Fred
+>>> fred = Fred(api_key='bc093630649045bffa9e3eed96929085')
+>>> gdp = fred.get_series('GDP')
+>>> unemployment_rate = fred.get_series('UNRATE')
+>>> consumer_confidence = fred.get_series('UMCSENT')
+>>> recession_dates = fred.get_series('USREC')
+>>> data = pd.DataFrame({
+...     'GDP': gdp,
+...     'Unemployment Rate': unemployment_rate,
+...     'Consumer Confidence': consumer_confidence
+... })
+>>> data.dropna(inplace=True)
+>>> recession_dates.name = 'Recession'
+>>> data = data.join(recession_dates, how='left')
+>>> data['Recession'].fillna(0, inplace=True)
+<stdin>:1: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+
+For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+
+
+>>> data['Recession Within Next Year'] = data['Recession'].shift(-12).fillna(0).astype(int)
+>>> data.dropna(inplace=True)
+>>> data['GDP Growth'] = data['GDP'].pct_change()
+>>> data['Unemployment MA'] = data['Unemployment Rate'].rolling(window=6).mean()
+>>> data.dropna(inplace=True)
+>>> X = data[['GDP Growth', 'Unemployment MA', 'Consumer Confidence']]
+>>> y = data['Recession Within Next Year']
+>>> X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+>>> model = RandomForestClassifier(n_estimators=100, random_state=42)
+>>> model.fit(X_train, y_train)
+RandomForestClassifier(random_state=42)
+>>> y_pred = model.predict(X_test)
+>>> print("Confusion Matrix:")
+Confusion Matrix:
+>>> print(confusion_matrix(y_test, y_pred))
+[[36  0]
+ [ 1  0]]
+>>> print("\nClassification Report:")
+
+Classification Report:
+>>> print(classification_report(y_test, y_pred))
+C:\Users\14027\AppData\Local\Programs\Python\Python311\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\14027\AppData\Local\Programs\Python\Python311\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\14027\AppData\Local\Programs\Python\Python311\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+              precision    recall  f1-score   support
+
+           0       0.97      1.00      0.99        36
+           1       0.00      0.00      0.00         1
+
+    accuracy                           0.97        37
+   macro avg       0.49      0.50      0.49        37
+weighted avg       0.95      0.97      0.96        37
+
+>>> latest_data = pd.DataFrame({
+...     'GDP Growth': [data['GDP Growth'].iloc[-1]],
+...     'Unemployment MA': [data['Unemployment MA'].iloc[-1]],
+...     'Consumer Confidence': [data['Consumer Confidence'].iloc[-1]]
+... })
+>>> prediction = model.predict(latest_data)
+>>> print("Recession within the next year?" , "Yes" if prediction[0] == 1 else "No")
+Recession within the next year? No
+>>> plt.figure(figsize=(12, 6))
+<Figure size 1200x600 with 0 Axes>
+>>> plt.plot(data.index, data['Recession Within Next Year'], label='Actual Recession', color='blue')
+[<matplotlib.lines.Line2D object at 0x00000232910A0F90>]
+>>> plt.plot(data.index, model.predict_proba(X)[:, 1], label='Predicted Probability of Recession', color='red')
+[<matplotlib.lines.Line2D object at 0x000002328F8C6890>]
+>>> plt.xlabel('Date')
+Text(0.5, 0, 'Date')
+>>> plt.ylabel('Recession Probability')
+Text(0, 0.5, 'Recession Probability')
+>>> plt.title('Recession Prediction Over Time')
+Text(0.5, 1.0, 'Recession Prediction Over Time')
+>>> plt.legend()
+<matplotlib.legend.Legend object at 0x00000232910A2C10>
+>>> plt.show()
