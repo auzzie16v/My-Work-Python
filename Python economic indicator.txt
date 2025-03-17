@@ -1,0 +1,42 @@
+##This python code extracted predictive measures based on economic data from https://fredaccount.stlouisfed.org/apikey to depict economic recession periods along with GDP##
+
+>>> import pandas as pd
+>>> import matplotlib.pyplot as plt
+>>> from fredapi import Fred
+>>> fred = Fred(api_key='bc093630649045bffa9e3eed96929085')
+>>> gdp = fred.get_series('GDP')
+>>> unemployment_rate = fred.get_series('UNRATE')
+>>> consumer_confidence = fred.get_series('UMCSENT')
+>>> data = pd.DataFrame({
+...     'GDP': gdp,
+...     'Unemployment Rate': unemployment_rate,
+...     'Consumer Confidence': consumer_confidence
+... })
+>>> data.dropna(inplace=True)
+>>> recession_dates = fred.get_series('USREC')
+>>> recession_dates.name = 'Recession_Dates'
+>>> data = data.join(recession_dates, how='left')
+>>> data['Recession_Dates'].fillna(0, inplace=True)
+<stdin>:1: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+
+For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+
+
+>>> data['Recession Within Next Year'] = data['Recession_Dates'].shift(-12).fillna(0).astype(int)
+>>> data.dropna(inplace=True)
+>>> plt.figure(figsize=(12, 6))
+<Figure size 1200x600 with 0 Axes>
+>>> plt.plot(data.index, data['GDP'], label='GDP', color='blue')
+[<matplotlib.lines.Line2D object at 0x000001FEB06BF4D0>]
+>>> plt.fill_between(data.index, data['GDP'], where=(data['Recession_Dates'] == 1), color='red', alpha=0.3, label='Recession')
+<matplotlib.collections.FillBetweenPolyCollection object at 0x000001FEB0D0A690>
+>>> plt.xlabel('Date')
+Text(0.5, 0, 'Date')
+>>> plt.ylabel('GDP')
+Text(0, 0.5, 'GDP')
+>>> plt.title('GDP Over Time with Recession Periods')
+Text(0.5, 1.0, 'GDP Over Time with Recession Periods')
+>>> plt.legend()
+<matplotlib.legend.Legend object at 0x000001FEB0C0D950>
+>>> plt.show()
